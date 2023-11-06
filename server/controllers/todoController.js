@@ -1,4 +1,3 @@
-// controllers/todoController.js
 const todoModel = require('../models/todoModel');
 
 const listTodos = (req, res) => {
