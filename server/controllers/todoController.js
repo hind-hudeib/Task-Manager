@@ -1,32 +1,61 @@
-const todoModel = require('../models/todoModel');
+// TodoController.js
+const express = require("express");
+const router = express.Router();
+const TodoModel = require("../models/todoModel");
 
-const listTodos = (req, res) => {
-  const todos = todoModel.getAll();
-  res.render('index', { todos });
-};
+// Create a todo
+router.post("/", async (req, res) => {
+  try {
+    const { text } = req.body;
+    const newTodo = await TodoModel.createTodo(text);
+    res.json(newTodo);
+  } catch (err) {
+    console.error(err.message);
+  }
+});
 
-const addTodo = (req, res) => {
-  const { task } = req.body;
-  todoModel.add({ task });
-  res.redirect('/');
-};
+// Get all todos
+router.get("/", async (req, res) => {
+  try {
+    const allTodos = await TodoModel.getAllTodos();
+    res.json(allTodos);
+  } catch (err) {
+    console.error(err.message);
+  }
+});
 
-const updateTodo = (req, res) => {
-  const { id } = req.params;
-  const updatedTodo = { task: req.body.task };
-  todoModel.update(id, updatedTodo);
-  res.redirect('/');
-};
+// Get a todo by ID
+router.get("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const todo = await TodoModel.getTodoById(id);
+    res.json(todo);
+  } catch (err) {
+    console.error(err.message);
+  }
+});
 
-const deleteTodo = (req, res) => {
-  const { id } = req.params;
-  todoModel.delete(id);
-  res.redirect('/');
-};
+// Update todo status to "done"
+router.put("/done/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    await TodoModel.updateTodoDoneStatus(id);
+    res.json("Todo was updated!");
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: "Server error" });
+  }
+});
 
-module.exports = {
-  listTodos,
-  addTodo,
-  updateTodo,
-  deleteTodo,
-};
+// Delete a todo by ID
+router.delete("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    await TodoModel.deleteTodo(id);
+    res.json("Todo was deleted!");
+  } catch (err) {
+    console.log(err.message);
+  }
+});
+
+module.exports = router;

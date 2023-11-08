@@ -10,14 +10,12 @@ const TodoList = () => {
   };
 
   useEffect(() => {
-    // Fetch todos from the API when the component mounts
     axios
       .get("http://localhost:5000/todos")
       .then((response) => {
-        // Initialize the 'done' property
         const todosWithDoneStatus = response.data.map((todo) => ({
           ...todo,
-          done: false, // Initialize to false by default
+          done: false,
         }));
         setTodos(todosWithDoneStatus);
       })
@@ -27,9 +25,11 @@ const TodoList = () => {
   }, []);
   
 
+
+
+
   const handleAddTodo = (e) => {
     e.preventDefault();
-
     // Create a new todo and send it to the server
     axios
       .post("http://localhost:5000/todos", { text: newTodo })
